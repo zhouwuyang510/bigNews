@@ -13,6 +13,7 @@
     <script src="./libs/jquery-1.12.4.min.js"></script>
     <!-- 导入bootstrap的js文件 -->
     <script src="./libs/bootstrap/js/bootstrap.min.js"></script>
+    <script src="./http.js"></script>
 </head>
 
 <body>
@@ -20,7 +21,7 @@
         <a href="#" class="logo"><img src="images/logo02.png" alt="logo"></a>
         <div class="user_info">
             <img src="images/2.jpg" alt="person">
-            <span>欢迎&nbsp;&nbsp;李思思</span>
+            <span>欢迎&nbsp;&nbsp;<i style="font-style: normal;">李思思</i></span>
             <b>管理员</b>
         </div>
         <!-- 左侧导航栏 -->
@@ -54,5 +55,30 @@
 
         </div>
     </div>
+    <script>
+            $(function(){
+                $.ajax({
+                    url:BigNew.user_info,
+                    // headers: {
+                    //     Authorization:window.localStorage.getItem('token')
+                    // },
+                    success:function(backData){
+                    //    console.log(backData)  
+                        if(backData.code==200) {
+                            $('.user_info>span>span').text(backData.data.nickname),
+                            $('.user_info>img').attr('src',backData.data.userPic),
+                            $('.user_center_link>img').attr('src',backData.data.userPic)
+                        }
+                    }
+                });
+                //二:登出
+                //1.给登出按钮设置一个点击事件
+                $('.logout').on('click',function(){
+                    //2.删除token,跳转到登录页面
+                    window.localStorage.removeItem('token');
+                    window.location.href='./login.html';
+                })
+            });
+        </script>
 </body>
 </html>

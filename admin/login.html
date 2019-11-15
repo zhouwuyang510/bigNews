@@ -15,6 +15,7 @@
   <script src="./libs/jquery-1.12.4.min.js"></script>
   <!-- 引入bootstrap的js文件 -->
   <script src="./libs/bootstrap/js/bootstrap.min.js"></script>
+  <script src="./http.js"></script>
 </head>
 
 <body>
@@ -37,7 +38,74 @@
       </form>
     </div>
   </div>
+  <!-- 使用bootstrap模态框 -->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+              aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">温馨提示</h4>
+        </div>
+        <div class="modal-body">
 
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" data-dismiss="modal">确定</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+      //登录需求
+      //1.给登录按钮设置一个点击事件
+      $('.input_sub').on('click', function (e) {
+        //因为在from表单中,submit按钮会自动提交表单,所以需要阻止此行为
+        e.preventDefault();
+        //2.获取用户输入的用户名和密码
+        var username = $('.input_txt').val().trim();
+        var password = $('.input_pass').val().trim();
+        //3.判断非空
+        if (username == "" || password == "") {
+          //引入bootstrap模态框
+          $('#myModal .modal-body').text('账号和密码不能为空');
+          // alert('用户名和密码不能为空');
+          $('#myModal').modal();
+          return;
+        };
+        //4.发送ajax请求,完成登录
+        $.ajax({
+
+          type: 'post',
+          url: BigNew.user_login,
+          data: {
+            username: username,
+            password: password
+          },
+
+          success: function (backData) {
+            // console.log(backData);
+            $('#myModal .modal-body').text(backData.msg);
+            // alert('用户名和密码不能为空');
+            $('#myModal').modal();
+            if (backData.code == 200) {
+              // alert(backData.msg);   
+              //账号和密码存入到本地         
+              window.localStorage.setItem('token',backData.token);
+              // $('#myModal').modal()
+              // window.location.href = './index.html';
+              //此事件在模态框被隐藏(并且同时在 css 过渡效果完成)之后被触发
+              $('#myModal').on('hidden.bs.modal', function (e) {
+                window.location.href = './index.html';
+              })
+            
+            } 
+          }
+        });
+      });
+    });
+  </script>
 </body>
 
 </html>
